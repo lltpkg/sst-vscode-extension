@@ -1,0 +1,3 @@
+#!/bin/sh
+# run quick check on staged files
+pnpm exec lint-staged

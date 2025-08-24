@@ -1,0 +1,6 @@
+source-path=./scripts
+source-path=./apps
+source-path=./packages
+external-sources=true
+
+disable=SC2164

@@ -1,0 +1,3 @@
+#!/bin/sh
+# install dependencies after git pull and git merge
+pnpm install --frozen-lockfile

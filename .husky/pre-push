@@ -1,0 +1,10 @@
+#!/bin/sh
+# run quick check on pre-push
+
+# Get the range of commits being pushed
+# shellcheck disable=SC1083
+commitCount=$(git rev-list HEAD...@{u} --count)
+
+if [ "$commitCount" -gt 0 ]; then
+    pnpm exec commitlint --from "HEAD~$commitCount" --to HEAD
+fi

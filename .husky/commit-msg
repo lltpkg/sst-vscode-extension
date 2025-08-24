@@ -1,0 +1,4 @@
+#!/bin/sh
+# run commit lint
+# shellcheck disable=SC1083
+pnpm run commitlint --edit \${1}

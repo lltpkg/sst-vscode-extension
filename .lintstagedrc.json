@@ -1,0 +1,5 @@
+{
+  "*.{ts,tsx,js,jsx,json,css,html}": ["pnpm lint -- --write"],
+  "*.{sh,bash}": ["pnpm shellcheck"],
+  "./.husky/*": ["pnpm shellcheck"]
+}

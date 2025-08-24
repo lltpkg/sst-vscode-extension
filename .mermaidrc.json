@@ -1,0 +1,10 @@
+{
+  "theme": "forest",
+  "look": "handDrawn",
+  "layout": "elk",
+  "darkMode": true,
+  "background": "red",
+  "elk": {
+    "nodePlacementStrategy": "SIMPLE"
+  }
+}

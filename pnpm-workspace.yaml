@@ -1,0 +1,15 @@
+packages:
+  - apps/*
+  - packages/*
+
+catalog:
+  '@tsconfig/node22': ^22.0.2
+  '@types/aws-lambda': ^8.10.152
+  '@types/node': ^22.13.10
+  typescript: 5.9.1-rc
+
+onlyBuiltDependencies:
+  - '@biomejs/biome'
+  - '@vscode/vsce-sign'
+  - esbuild
+  - keytar

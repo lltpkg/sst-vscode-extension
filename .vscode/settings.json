@@ -1,0 +1,31 @@
+{
+  "editor.defaultFormatter": "biomejs.biome",
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  // we dont use tsgo for vscode ext, typescript 5.9 is fast enough
+  "typescript.experimental.useTsgo": false,
+  "editor.formatOnSave": true,
+  "biome.configurationPath": "./biome.json",
+  "[yaml]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "biome.lsp.bin": "node_modules/.bin/biome",
+  "typescript.native-preview.tsdk": "./node_modules/.bin/tsgo",
+  "typescript.format.enable": false,
+  "typescript.preferences.preferTypeOnlyAutoImports": true,
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "typescript.tsserver.maxTsServerMemory": 4096,
+  "files.insertFinalNewline": true,
+  "cSpell.workspaceRootPath": "./",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports.biome": "explicit",
+    "source.fixAll.biome": "explicit"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  }
+}
