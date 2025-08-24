@@ -49,7 +49,7 @@ jobs:
 
   build-and-test-analyzer:
     needs: lint
-    name: Build, and Test analyzer package
+    name: Build & Test analyzer package
     runs-on: ubuntu-latest
     env: 
       TURBO_CACHE_DIR: 'node_modules/.cache/.turbo'
@@ -89,7 +89,7 @@ jobs:
           key: ${{ runner.os }}-turbo-${{ hashFiles('node_modules/.cache/.turbo/*.json') }}
   build-and-test-extension:
     needs: [build-and-test-analyzer, lint]
-    name: Build, and Test extension
+    name: Build & Test extension
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest] # no windows testing at this time
