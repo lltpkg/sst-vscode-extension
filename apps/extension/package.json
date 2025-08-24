@@ -5,6 +5,13 @@
   "version": "0.0.1",
   "publisher": "kairiss",
   "icon": "icon.png",
+
+  "files": [
+    "dist/extensions.js",
+    "icon.png",
+    "LICENSE",
+    "README.md"
+  ],
   "author": {
     "name": "Kai (Thien Ly)",
     "email": "43800313+lyluongthien@users.noreply.github.com",
