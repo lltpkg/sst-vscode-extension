@@ -1,0 +1,16 @@
+---
+title: test
+displayMode: compact
+config:
+    theme: forest
+    look: handDrawn
+    layout: elk
+    elk:
+        nodePlacementStrategy: SIMPLE
+---
+    
+graph TD
+	QHZT("sst-analyzer#build") --> ETTT("___ROOT___")
+	JEGP("sst-analyzer#test") --> ETTT("___ROOT___")
+	EMLE("sst-vsc-ext#test") --> QHZT("sst-analyzer#build")
+	EMLE("sst-vsc-ext#test") --> JEGP("sst-analyzer#test")
