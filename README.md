@@ -61,7 +61,3 @@ sst-vscode-extension/
 └── apps/
     └── extension/         # VSCode extension
 ```
-
-## License
-
-MIT - see individual package LICENSE files for details.
