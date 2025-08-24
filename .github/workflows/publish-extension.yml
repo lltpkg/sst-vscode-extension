@@ -150,17 +150,6 @@ jobs:
           body_path: release_notes.md
           draft: false
           prerelease: ${{ github.event.inputs.prerelease == 'true' }}
-
-      - name: Upload VSIX to new Release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ needs.publish.outputs.vsix-path }}
-          asset_name: sst-vsc-ext-${{ needs.publish.outputs.version }}.vsix
-          asset_content_type: application/zip
-
   
       - name: Upload VSIX to new Release
         uses: softprops/action-gh-release@v2
