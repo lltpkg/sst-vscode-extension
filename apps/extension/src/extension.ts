@@ -6,189 +6,238 @@ import { SSTDefinitionProvider } from "./definitionProvider";
 import { SSTDiagnosticProvider } from "./diagnosticProvider";
 import { SSTHoverProvider } from "./hoverProvider";
 
-let completionProvider: SSTCompletionProvider;
-let definitionProvider: SSTDefinitionProvider;
-let hoverProvider: SSTHoverProvider;
-let diagnosticProvider: SSTDiagnosticProvider;
+type Providers = {
+  completion: SSTCompletionProvider;
+  definition: SSTDefinitionProvider;
+  hover: SSTHoverProvider;
+  diagnostic: SSTDiagnosticProvider;
+  codeAction: SSTCodeActionProvider;
+};
+
+type ExtensionContext = {
+  workspaceRoot: string;
+  typescript: typeof import("typescript");
+  outputChannel: vscode.OutputChannel;
+  providers: Providers;
+};
+
+let extensionContext: ExtensionContext | null = null;
 
 export async function activate(context: vscode.ExtensionContext) {
   const outputChannel = vscode.window.createOutputChannel("SST Extension Log");
-  outputChannel.appendLine("starting.. cwd::" + process.cwd());
+
   try {
     context.subscriptions.push(outputChannel);
-    outputChannel.appendLine("SST VSCode Extension is now activating...");
+    logInfo(outputChannel, "SST VSCode Extension is now activating...", { cwd: process.cwd() });
 
-    const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+    const workspaceRoot = await validateWorkspace(outputChannel);
+    if (!workspaceRoot) return;
 
-    if (!workspaceRoot) {
-      outputChannel.appendLine("No SST workspace folder found, exiting...");
-      return;
-    }
-    outputChannel.appendLine(`SST workspace folder found: ${workspaceRoot}`);
+    const typescript = await loadTypeScript(workspaceRoot, outputChannel);
+    if (!typescript) return;
 
-    let ts: typeof import("typescript");
-    try {
-      const localTypescriptPath = require.resolve("typescript", { paths: [workspaceRoot] });
-      outputChannel.appendLine(`Loading typescript from ${localTypescriptPath}`);
-      ts = await import(localTypescriptPath);
-    } catch (error) {
-      // trying to get typescript from vscode ts extension
-      const vscodeTsExt = vscode.extensions.all[0];
+    setupProcessEventHandlers(outputChannel);
 
-      const vscodeTsPath = path.resolve(
-        vscodeTsExt.extensionPath,
-        "..",
-        "node_modules/typescript/lib/typescript.js",
-      );
-      outputChannel.appendLine(`Loading typescript from vscode vscodeTsPath: ${vscodeTsPath}`);
+    const providers = createProviders(workspaceRoot, typescript);
+    extensionContext = { workspaceRoot, typescript, outputChannel, providers };
 
-      if (vscodeTsPath) {
-        try {
-          ts = await import(vscodeTsPath);
-        } catch (error) {
-          outputChannel.appendLine("Error loading typescript from vscode extension: " + error);
-          return;
-        }
-      } else {
-        outputChannel.appendLine("Error resolving typescript: " + error);
-        vscode.window.showInformationMessage(
-          `No typescript found, please install typescript in workspace, or try to refresh the extension`,
-        );
-        return;
-      }
-    }
+    const registrations = registerLanguageProviders(providers);
+    const commands = registerCommands(providers, outputChannel);
+    const eventHandlers = setupEventHandlers(providers);
 
-    process.on("unhandledRejection", (error) => {
-      outputChannel.appendLine("Unhandled rejection: " + error);
+    context.subscriptions.push(
+      ...registrations,
+      ...commands,
+      ...eventHandlers,
+      providers.diagnostic,
+    );
+
+    await initializeDocumentValidation(providers.diagnostic);
+    logInfo(outputChannel, "SST Extension activated successfully");
+  } catch (error) {
+    logError(outputChannel, "Failed to activate extension", error);
+  }
+}
+
+async function validateWorkspace(outputChannel: vscode.OutputChannel): Promise<string | null> {
+  const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+
+  if (!workspaceRoot) {
+    logError(outputChannel, "No SST workspace folder found, exiting");
+    return null;
+  }
+
+  logInfo(outputChannel, "SST workspace folder found", { path: workspaceRoot });
+  return workspaceRoot;
+}
+
+async function loadTypeScript(
+  workspaceRoot: string,
+  outputChannel: vscode.OutputChannel,
+): Promise<typeof import("typescript") | null> {
+  try {
+    const localTypescriptPath = require.resolve("typescript", { paths: [workspaceRoot] });
+    logInfo(outputChannel, "Loading TypeScript from workspace", { path: localTypescriptPath });
+    return await import(localTypescriptPath);
+  } catch (error) {
+    logInfo(outputChannel, "Local TypeScript not found, trying VSCode extension");
+    return await loadTypeScriptFromVSCode(outputChannel);
+  }
+}
+
+async function loadTypeScriptFromVSCode(
+  outputChannel: vscode.OutputChannel,
+): Promise<typeof import("typescript") | null> {
+  try {
+    const vscodeTsExt = vscode.extensions.all[0];
+    const vscodeTsPath = path.resolve(
+      vscodeTsExt.extensionPath,
+      "..",
+      "node_modules/typescript/lib/typescript.js",
+    );
+
+    logInfo(outputChannel, "Loading TypeScript from VSCode", { path: vscodeTsPath });
+    return await import(vscodeTsPath);
+  } catch (error) {
+    logError(outputChannel, "Failed to load TypeScript from VSCode extension", error);
+    vscode.window.showErrorMessage(
+      "No TypeScript found. Please install TypeScript in workspace or refresh the extension",
+    );
+    return null;
+  }
+}
+
+function setupProcessEventHandlers(outputChannel: vscode.OutputChannel) {
+  const events = [
+    "unhandledRejection",
+    "warning",
+    "exit",
+    "beforeExit",
+    "rejectionHandled",
+    "uncaughtException",
+  ] as const;
+
+  events.forEach((event) => {
+    process.on(event, (data) => {
+      logInfo(outputChannel, `Process ${event}`, { data: String(data) });
     });
-    process.on("warning", (warning) => {
-      outputChannel.appendLine("Warning: " + warning);
-    });
-    process.on("exit", (code) => {
-      outputChannel.appendLine("Exit: " + code);
-    });
-    process.on("beforeExit", (code) => {
-      outputChannel.appendLine("Before exit: " + code);
-    });
-    process.on("rejectionHandled", (promise) => {
-      outputChannel.appendLine("Rejection handled: " + promise);
-    });
-    process.on("uncaughtException", (error) => {
-      outputChannel.appendLine("Uncaught exception: " + error);
-    });
-    process.on("unhandledRejection", (error) => {
-      outputChannel.appendLine("Unhandled rejection: " + error);
-    });
+  });
+}
 
-    completionProvider = new SSTCompletionProvider(workspaceRoot, ts);
-    definitionProvider = new SSTDefinitionProvider(workspaceRoot, ts);
-    hoverProvider = new SSTHoverProvider(workspaceRoot, ts);
-    diagnosticProvider = new SSTDiagnosticProvider(workspaceRoot, ts);
+function createProviders(
+  workspaceRoot: string,
+  typescript: typeof import("typescript"),
+): Providers {
+  return {
+    completion: new SSTCompletionProvider(workspaceRoot, typescript),
+    definition: new SSTDefinitionProvider(workspaceRoot, typescript),
+    hover: new SSTHoverProvider(workspaceRoot, typescript),
+    diagnostic: new SSTDiagnosticProvider(workspaceRoot, typescript),
+    codeAction: new SSTCodeActionProvider(),
+  };
+}
 
-    const completionProviderRegistration = vscode.languages.registerCompletionItemProvider(
-      { scheme: "file", language: "typescript" },
-      completionProvider,
+function registerLanguageProviders(providers: Providers): vscode.Disposable[] {
+  const typeScriptSelector = { scheme: "file", language: "typescript" };
+
+  return [
+    vscode.languages.registerCompletionItemProvider(
+      typeScriptSelector,
+      providers.completion,
       '"',
       "'",
       "`",
       ".",
-    );
+    ),
+    vscode.languages.registerDefinitionProvider(typeScriptSelector, providers.definition),
+    vscode.languages.registerHoverProvider(typeScriptSelector, providers.hover),
+    vscode.languages.registerCodeActionsProvider(typeScriptSelector, providers.codeAction, {
+      providedCodeActionKinds: SSTCodeActionProvider.providedCodeActionKinds,
+    }),
+  ];
+}
 
-    const definitionProviderRegistration = vscode.languages.registerDefinitionProvider(
-      { scheme: "file", language: "typescript" },
-      definitionProvider,
-    );
-
-    const hoverProviderRegistration = vscode.languages.registerHoverProvider(
-      { scheme: "file", language: "typescript" },
-      hoverProvider,
-    );
-
-    const codeActionProvider = new SSTCodeActionProvider();
-    const codeActionProviderRegistration = vscode.languages.registerCodeActionsProvider(
-      { scheme: "file", language: "typescript" },
-      codeActionProvider,
-      {
-        providedCodeActionKinds: SSTCodeActionProvider.providedCodeActionKinds,
-      },
-    );
-
-    const refreshCommand = vscode.commands.registerCommand(
-      "sst-vsc-ext.refreshHandlers",
-      async () => {
-        console.log("Refresh command triggered!");
-        try {
-          await completionProvider.refreshHandlers();
-          await diagnosticProvider.refreshValidation();
-          vscode.window.showInformationMessage("SST handlers refreshed successfully!");
-        } catch (error) {
-          console.error("Error refreshing handlers:", error);
-          vscode.window.showErrorMessage(`Failed to refresh handlers: ${error}`);
-        }
-      },
-    );
-
-    outputChannel.appendLine("Commands registered successfully");
-
-    // Set up document validation
-    const validateDocument = async (document: vscode.TextDocument) => {
-      if (document.languageId === "typescript") {
-        await diagnosticProvider.validateDocument(document);
+function registerCommands(
+  providers: Providers,
+  outputChannel: vscode.OutputChannel,
+): vscode.Disposable[] {
+  return [
+    vscode.commands.registerCommand("sst-vsc-ext.refreshHandlers", async () => {
+      try {
+        logInfo(outputChannel, "Refresh command triggered");
+        await Promise.all([
+          providers.completion.refreshHandlers(),
+          providers.diagnostic.refreshValidation(),
+        ]);
+        vscode.window.showInformationMessage("SST handlers refreshed successfully!");
+      } catch (error) {
+        logError(outputChannel, "Failed to refresh handlers", error);
+        vscode.window.showErrorMessage(`Failed to refresh handlers: ${error}`);
       }
-    };
+    }),
+  ];
+}
 
-    // Validate all currently open documents
-    vscode.workspace.textDocuments.forEach(validateDocument);
+function setupEventHandlers(providers: Providers): vscode.Disposable[] {
+  const validateDocument = async (document: vscode.TextDocument) => {
+    if (document.languageId === "typescript") {
+      await providers.diagnostic.validateDocument(document);
+    }
+  };
 
-    // Set up event listeners for document changes
-    const onDocumentChange = vscode.workspace.onDidChangeTextDocument(async (event) => {
+  const refreshHandlers = async () => {
+    await Promise.all([
+      providers.completion.refreshHandlers(),
+      providers.diagnostic.refreshValidation(),
+    ]);
+  };
+
+  const onDocumentSave = vscode.workspace.onDidSaveTextDocument(async (document) => {
+    await validateDocument(document);
+    if (document.fileName.endsWith(".ts")) {
+      await refreshHandlers();
+    }
+  });
+
+  const fileWatcher = vscode.workspace.createFileSystemWatcher("**/*.ts");
+  fileWatcher.onDidCreate(refreshHandlers);
+  fileWatcher.onDidDelete(refreshHandlers);
+  fileWatcher.onDidChange(refreshHandlers);
+
+  return [
+    vscode.workspace.onDidChangeTextDocument(async (event) => {
       await validateDocument(event.document);
-    });
+    }),
+    vscode.workspace.onDidOpenTextDocument(validateDocument),
+    onDocumentSave,
+    fileWatcher,
+  ];
+}
 
-    const onDocumentOpen = vscode.workspace.onDidOpenTextDocument(validateDocument);
+async function initializeDocumentValidation(diagnosticProvider: SSTDiagnosticProvider) {
+  const validateDocument = async (document: vscode.TextDocument) => {
+    if (document.languageId === "typescript") {
+      await diagnosticProvider.validateDocument(document);
+    }
+  };
 
-    const onDocumentSave = vscode.workspace.onDidSaveTextDocument(async (document) => {
-      await validateDocument(document);
-      // Also refresh handlers when files are saved to catch new exports
-      if (document.fileName.endsWith(".ts")) {
-        await completionProvider.refreshHandlers();
-        await diagnosticProvider.refreshValidation();
-      }
-    });
+  await Promise.all(vscode.workspace.textDocuments.map(validateDocument));
+}
 
-    const fileWatcher = vscode.workspace.createFileSystemWatcher("**/*.ts");
+function logInfo(
+  outputChannel: vscode.OutputChannel,
+  message: string,
+  data?: Record<string, unknown>,
+) {
+  const timestamp = new Date().toISOString();
+  const logData = data ? ` | ${JSON.stringify(data)}` : "";
+  outputChannel.appendLine(`[${timestamp}] INFO: ${message}${logData}`);
+}
 
-    fileWatcher.onDidCreate(async () => {
-      await completionProvider.refreshHandlers();
-      await diagnosticProvider.refreshValidation();
-    });
-    fileWatcher.onDidDelete(async () => {
-      await completionProvider.refreshHandlers();
-      await diagnosticProvider.refreshValidation();
-    });
-    fileWatcher.onDidChange(async () => {
-      await completionProvider.refreshHandlers();
-      await diagnosticProvider.refreshValidation();
-    });
-
-    context.subscriptions.push(
-      completionProviderRegistration,
-      definitionProviderRegistration,
-      hoverProviderRegistration,
-      codeActionProviderRegistration,
-      refreshCommand,
-      fileWatcher,
-      onDocumentChange,
-      onDocumentOpen,
-      onDocumentSave,
-      diagnosticProvider,
-    );
-  } catch (error) {
-    outputChannel.appendLine(`Error activating extension: ${error}`);
-  } finally {
-    outputChannel.appendLine("finally");
-    outputChannel.appendLine(`SST Extension activated`);
-  }
+function logError(outputChannel: vscode.OutputChannel, message: string, error?: unknown) {
+  const timestamp = new Date().toISOString();
+  const errorDetails = error ? ` | Error: ${String(error)}` : "";
+  outputChannel.appendLine(`[${timestamp}] ERROR: ${message}${errorDetails}`);
 }
 
 export function deactivate() {}
