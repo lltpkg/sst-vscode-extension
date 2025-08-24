@@ -11,7 +11,10 @@ on:
 jobs:
   test:
     name: Lint, Build, and Test
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -31,10 +34,8 @@ jobs:
         run: pnpm run lint
       - name: Build
         run: pnpm run build
-      - name: Test
+      - name: Test analyzer package
         run: pnpm run test --filter=@cute-me-on-repos/sst-analyzer
-      - name: Test vscode extension
-        run: pnpm run test --filter=@cute-me-on-repos/sst-vsc-ext
       - name: Test vscode extension (Linux)
         run: cd apps/extension && xvfb-run -a pnpm run test
         if: runner.os == 'Linux'
