@@ -22,6 +22,9 @@ export type ValidationResult = {
   isValid: boolean;
   errors: ValidationError[];
   warnings: ValidationWarning[];
+  handlers: HandlerInfo[];
+  sstProjectConfigPath: string;
+  tsConfigPath: string;
 };
 
 export type ValidationError = {

@@ -1,0 +1,595 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CLI Commands - Spawn Process Tests > Statistics Command > should output statistics in some format 1`] = `
+{
+  "handlerUsages": [
+    {
+      "handlerPath": "functions/details.handler",
+      "locations": [
+        {
+          "column": 3,
+          "contextInfo": "Cron Job",
+          "contextType": "cron",
+          "filePath": "cron.ts",
+          "line": 7,
+        },
+        {
+          "column": 3,
+          "contextInfo": "Lambda Function",
+          "contextType": "function",
+          "filePath": "lambda.ts",
+          "line": 20,
+        },
+        {
+          "column": 17,
+          "contextInfo": "Queue Subscriber",
+          "contextType": "queue",
+          "filePath": "queue.ts",
+          "line": 5,
+        },
+        {
+          "column": 17,
+          "contextInfo": "Queue Subscriber",
+          "contextType": "queue",
+          "filePath": "queue.ts",
+          "line": 9,
+        },
+        {
+          "column": 17,
+          "contextInfo": "Queue Subscriber",
+          "contextType": "queue",
+          "filePath": "queue.ts",
+          "line": 10,
+        },
+        {
+          "column": 3,
+          "contextInfo": "Lambda Function",
+          "contextType": "function",
+          "filePath": "queue.ts",
+          "line": 13,
+        },
+        {
+          "column": 3,
+          "contextInfo": "Cron Job",
+          "contextType": "cron",
+          "filePath": "queue.ts",
+          "line": 35,
+        },
+      ],
+      "usageCount": 7,
+    },
+    {
+      "handlerPath": "functions/details.handler2",
+      "locations": [
+        {
+          "column": 3,
+          "contextInfo": "Cron Job",
+          "contextType": "cron",
+          "filePath": "queue.ts",
+          "line": 40,
+        },
+      ],
+      "usageCount": 1,
+    },
+    {
+      "handlerPath": "functions/hono-serverless.handler",
+      "locations": [
+        {
+          "column": 3,
+          "contextInfo": "Lambda Function",
+          "contextType": "function",
+          "filePath": "hono-serverless.ts",
+          "line": 10,
+        },
+        {
+          "column": 7,
+          "contextInfo": "Bucket Notification",
+          "contextType": "bucket",
+          "filePath": "bucket.ts",
+          "line": 9,
+        },
+        {
+          "column": 7,
+          "contextInfo": "Bucket Notification",
+          "contextType": "bucket",
+          "filePath": "bucket.ts",
+          "line": 13,
+        },
+        {
+          "column": 7,
+          "contextInfo": "Bucket Notification",
+          "contextType": "bucket",
+          "filePath": "bucket.ts",
+          "line": 17,
+        },
+      ],
+      "usageCount": 4,
+    },
+    {
+      "handlerPath": "functions/invoke-multi-steps.handler",
+      "locations": [
+        {
+          "column": 3,
+          "contextInfo": "Lambda Function",
+          "contextType": "function",
+          "filePath": "lambda.ts",
+          "line": 16,
+        },
+      ],
+      "usageCount": 1,
+    },
+    {
+      "handlerPath": "functions/public-bucket-subscriber.handler",
+      "locations": [],
+      "usageCount": 0,
+    },
+    {
+      "handlerPath": "functions/upload.handler",
+      "locations": [
+        {
+          "column": 29,
+          "contextInfo": "API Gateway V1 Route",
+          "contextType": "apigatewayv1",
+          "filePath": "apiv1.ts",
+          "line": 5,
+        },
+        {
+          "column": 30,
+          "contextInfo": "API Gateway V1 Route",
+          "contextType": "apigatewayv1",
+          "filePath": "apiv1.ts",
+          "line": 6,
+        },
+        {
+          "column": 31,
+          "contextInfo": "API Gateway V1 Route",
+          "contextType": "apigatewayv1",
+          "filePath": "apiv1.ts",
+          "line": 9,
+        },
+        {
+          "column": 3,
+          "contextInfo": "Lambda Function",
+          "contextType": "function",
+          "filePath": "lambda.ts",
+          "line": 9,
+        },
+      ],
+      "usageCount": 4,
+    },
+    {
+      "handlerPath": "lib/flags.enableFeature",
+      "locations": [],
+      "usageCount": 0,
+    },
+    {
+      "handlerPath": "lib/handler-factory.createAWSHandler",
+      "locations": [],
+      "usageCount": 0,
+    },
+    {
+      "handlerPath": "functions/xx.handler",
+      "locations": [
+        {
+          "column": 31,
+          "contextInfo": "API Gateway V1 Route",
+          "contextType": "apigatewayv1",
+          "filePath": "apiv1.ts",
+          "line": 7,
+        },
+      ],
+      "usageCount": 1,
+    },
+    {
+      "handlerPath": "functions/ss.handler",
+      "locations": [
+        {
+          "column": 31,
+          "contextInfo": "API Gateway V1 Route",
+          "contextType": "apigatewayv1",
+          "filePath": "apiv1.ts",
+          "line": 8,
+        },
+      ],
+      "usageCount": 1,
+    },
+    {
+      "handlerPath": "functions/hosno-serverless.handler",
+      "locations": [
+        {
+          "column": 7,
+          "contextInfo": "Bucket Notification",
+          "contextType": "bucket",
+          "filePath": "bucket.ts",
+          "line": 21,
+        },
+      ],
+      "usageCount": 1,
+    },
+    {
+      "handlerPath": "functions/",
+      "locations": [
+        {
+          "column": 7,
+          "contextInfo": "Bucket Notification",
+          "contextType": "bucket",
+          "filePath": "bucket.ts",
+          "line": 25,
+        },
+      ],
+      "usageCount": 1,
+    },
+    {
+      "handlerPath": "infra/bucket.publicBucket",
+      "locations": [
+        {
+          "column": 7,
+          "contextInfo": "Bucket Notification",
+          "contextType": "bucket",
+          "filePath": "bucket.ts",
+          "line": 29,
+        },
+      ],
+      "usageCount": 1,
+    },
+    {
+      "handlerPath": "infra/vpc.vpc",
+      "locations": [
+        {
+          "column": 7,
+          "contextInfo": "Bucket Notification",
+          "contextType": "bucket",
+          "filePath": "bucket.ts",
+          "line": 33,
+        },
+      ],
+      "usageCount": 1,
+    },
+    {
+      "handlerPath": "functions/s.handler",
+      "locations": [
+        {
+          "column": 3,
+          "contextInfo": "Lambda Function",
+          "contextType": "function",
+          "filePath": "lambda.ts",
+          "line": 24,
+        },
+        {
+          "column": 3,
+          "contextInfo": "Lambda Function",
+          "contextType": "function",
+          "filePath": "lambda.ts",
+          "line": 28,
+        },
+        {
+          "column": 3,
+          "contextInfo": "Lambda Function",
+          "contextType": "function",
+          "filePath": "queue.ts",
+          "line": 17,
+        },
+      ],
+      "usageCount": 3,
+    },
+    {
+      "handlerPath": "functions/detailsx.handler",
+      "locations": [
+        {
+          "column": 17,
+          "contextInfo": "Queue Subscriber",
+          "contextType": "queue",
+          "filePath": "queue.ts",
+          "line": 6,
+        },
+      ],
+      "usageCount": 1,
+    },
+    {
+      "handlerPath": "functions/detailsSxx.handler",
+      "locations": [
+        {
+          "column": 17,
+          "contextInfo": "Queue Subscriber",
+          "contextType": "queue",
+          "filePath": "queue.ts",
+          "line": 7,
+        },
+        {
+          "column": 3,
+          "contextInfo": "Lambda Function",
+          "contextType": "function",
+          "filePath": "queue.ts",
+          "line": 21,
+        },
+        {
+          "column": 3,
+          "contextInfo": "Cron Job",
+          "contextType": "cron",
+          "filePath": "queue.ts",
+          "line": 25,
+        },
+      ],
+      "usageCount": 3,
+    },
+    {
+      "handlerPath": "functions/detailsSx.handler",
+      "locations": [
+        {
+          "column": 17,
+          "contextInfo": "Queue Subscriber",
+          "contextType": "queue",
+          "filePath": "queue.ts",
+          "line": 8,
+        },
+        {
+          "column": 3,
+          "contextInfo": "Cron Job",
+          "contextType": "cron",
+          "filePath": "queue.ts",
+          "line": 30,
+        },
+      ],
+      "usageCount": 2,
+    },
+  ],
+  "mostUsedHandlers": [
+    {
+      "handlerPath": "functions/details.handler",
+      "locations": [
+        {
+          "column": 3,
+          "contextInfo": "Cron Job",
+          "contextType": "cron",
+          "filePath": "cron.ts",
+          "line": 7,
+        },
+        {
+          "column": 3,
+          "contextInfo": "Lambda Function",
+          "contextType": "function",
+          "filePath": "lambda.ts",
+          "line": 20,
+        },
+        {
+          "column": 17,
+          "contextInfo": "Queue Subscriber",
+          "contextType": "queue",
+          "filePath": "queue.ts",
+          "line": 5,
+        },
+        {
+          "column": 17,
+          "contextInfo": "Queue Subscriber",
+          "contextType": "queue",
+          "filePath": "queue.ts",
+          "line": 9,
+        },
+        {
+          "column": 17,
+          "contextInfo": "Queue Subscriber",
+          "contextType": "queue",
+          "filePath": "queue.ts",
+          "line": 10,
+        },
+        {
+          "column": 3,
+          "contextInfo": "Lambda Function",
+          "contextType": "function",
+          "filePath": "queue.ts",
+          "line": 13,
+        },
+        {
+          "column": 3,
+          "contextInfo": "Cron Job",
+          "contextType": "cron",
+          "filePath": "queue.ts",
+          "line": 35,
+        },
+      ],
+      "usageCount": 7,
+    },
+    {
+      "handlerPath": "functions/hono-serverless.handler",
+      "locations": [
+        {
+          "column": 3,
+          "contextInfo": "Lambda Function",
+          "contextType": "function",
+          "filePath": "hono-serverless.ts",
+          "line": 10,
+        },
+        {
+          "column": 7,
+          "contextInfo": "Bucket Notification",
+          "contextType": "bucket",
+          "filePath": "bucket.ts",
+          "line": 9,
+        },
+        {
+          "column": 7,
+          "contextInfo": "Bucket Notification",
+          "contextType": "bucket",
+          "filePath": "bucket.ts",
+          "line": 13,
+        },
+        {
+          "column": 7,
+          "contextInfo": "Bucket Notification",
+          "contextType": "bucket",
+          "filePath": "bucket.ts",
+          "line": 17,
+        },
+      ],
+      "usageCount": 4,
+    },
+    {
+      "handlerPath": "functions/upload.handler",
+      "locations": [
+        {
+          "column": 29,
+          "contextInfo": "API Gateway V1 Route",
+          "contextType": "apigatewayv1",
+          "filePath": "apiv1.ts",
+          "line": 5,
+        },
+        {
+          "column": 30,
+          "contextInfo": "API Gateway V1 Route",
+          "contextType": "apigatewayv1",
+          "filePath": "apiv1.ts",
+          "line": 6,
+        },
+        {
+          "column": 31,
+          "contextInfo": "API Gateway V1 Route",
+          "contextType": "apigatewayv1",
+          "filePath": "apiv1.ts",
+          "line": 9,
+        },
+        {
+          "column": 3,
+          "contextInfo": "Lambda Function",
+          "contextType": "function",
+          "filePath": "lambda.ts",
+          "line": 9,
+        },
+      ],
+      "usageCount": 4,
+    },
+    {
+      "handlerPath": "functions/s.handler",
+      "locations": [
+        {
+          "column": 3,
+          "contextInfo": "Lambda Function",
+          "contextType": "function",
+          "filePath": "lambda.ts",
+          "line": 24,
+        },
+        {
+          "column": 3,
+          "contextInfo": "Lambda Function",
+          "contextType": "function",
+          "filePath": "lambda.ts",
+          "line": 28,
+        },
+        {
+          "column": 3,
+          "contextInfo": "Lambda Function",
+          "contextType": "function",
+          "filePath": "queue.ts",
+          "line": 17,
+        },
+      ],
+      "usageCount": 3,
+    },
+    {
+      "handlerPath": "functions/detailsSxx.handler",
+      "locations": [
+        {
+          "column": 17,
+          "contextInfo": "Queue Subscriber",
+          "contextType": "queue",
+          "filePath": "queue.ts",
+          "line": 7,
+        },
+        {
+          "column": 3,
+          "contextInfo": "Lambda Function",
+          "contextType": "function",
+          "filePath": "queue.ts",
+          "line": 21,
+        },
+        {
+          "column": 3,
+          "contextInfo": "Cron Job",
+          "contextType": "cron",
+          "filePath": "queue.ts",
+          "line": 25,
+        },
+      ],
+      "usageCount": 3,
+    },
+    {
+      "handlerPath": "functions/detailsSx.handler",
+      "locations": [
+        {
+          "column": 17,
+          "contextInfo": "Queue Subscriber",
+          "contextType": "queue",
+          "filePath": "queue.ts",
+          "line": 8,
+        },
+        {
+          "column": 3,
+          "contextInfo": "Cron Job",
+          "contextType": "cron",
+          "filePath": "queue.ts",
+          "line": 30,
+        },
+      ],
+      "usageCount": 2,
+    },
+    {
+      "handlerPath": "functions/details.handler2",
+      "locations": [
+        {
+          "column": 3,
+          "contextInfo": "Cron Job",
+          "contextType": "cron",
+          "filePath": "queue.ts",
+          "line": 40,
+        },
+      ],
+      "usageCount": 1,
+    },
+    {
+      "handlerPath": "functions/invoke-multi-steps.handler",
+      "locations": [
+        {
+          "column": 3,
+          "contextInfo": "Lambda Function",
+          "contextType": "function",
+          "filePath": "lambda.ts",
+          "line": 16,
+        },
+      ],
+      "usageCount": 1,
+    },
+    {
+      "handlerPath": "functions/xx.handler",
+      "locations": [
+        {
+          "column": 31,
+          "contextInfo": "API Gateway V1 Route",
+          "contextType": "apigatewayv1",
+          "filePath": "apiv1.ts",
+          "line": 7,
+        },
+      ],
+      "usageCount": 1,
+    },
+    {
+      "handlerPath": "functions/ss.handler",
+      "locations": [
+        {
+          "column": 31,
+          "contextInfo": "API Gateway V1 Route",
+          "contextType": "apigatewayv1",
+          "filePath": "apiv1.ts",
+          "line": 8,
+        },
+      ],
+      "usageCount": 1,
+    },
+  ],
+  "totalHandlers": 8,
+  "totalUsages": 32,
+  "unusedHandlers": [
+    "functions/public-bucket-subscriber.handler",
+    "lib/flags.enableFeature",
+    "lib/handler-factory.createAWSHandler",
+  ],
+}
+`;

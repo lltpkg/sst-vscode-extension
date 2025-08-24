@@ -22,7 +22,6 @@ export async function validateCommand(options?: { path?: string; json?: boolean 
   try {
     const validator = new SSTValidator(projectPath, await import(getLocalTsPath()));
     const result = await validator.validateProject();
-
     if (opts.json) {
       console.log(JSON.stringify(result, null, 2));
       return;
@@ -31,6 +30,12 @@ export async function validateCommand(options?: { path?: string; json?: boolean 
     // Human-readable output
     if (result.isValid) {
       console.log(chalk.green("✅ All handler references are valid!"));
+      // print handlers
+      console.log(chalk.blue(`📁 Found ${result.handlers.length} handler file(s):`));
+      for (const handler of result.handlers) {
+        console.log(chalk.green(`📄 ${handler.relativePath}.ts`));
+        console.log(chalk.gray(`   Functions: ${handler.exportedFunctions.join(", ")}`));
+      }
     } else {
       console.log(chalk.red(`❌ Found ${result.errors.length} error(s):`));
       console.log();
@@ -137,10 +142,11 @@ export async function validateFileCommand(
       }
     }
 
-    if (!options) process.exit(errors.length === 0 ? 0 : 1);
+    if (!options && errors.length > 0) process.exit(1);
   } catch (error) {
     console.error(chalk.red("❌ File validation failed:"), error);
     if (!options) process.exit(1);
+    throw error;
   }
 }
 

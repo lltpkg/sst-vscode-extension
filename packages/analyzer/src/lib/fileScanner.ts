@@ -10,27 +10,24 @@ type TSConfig = {
 };
 
 export class FileScanner {
-  protected sstRoot: string | null = null;
   protected tsConfig: TSConfig | null = null;
 
   constructor(
-    protected readonly workspaceRoot: string,
+    protected workspaceRoot: string = "",
     protected readonly ts: typeof import("typescript"),
-  ) {
-    this.workspaceRoot = workspaceRoot;
-  }
+  ) {}
 
   public async findProjectConfig(): Promise<SSTProjectConfig | null> {
-    const sstRoot = await this.findSstRoot();
-    if (!sstRoot) return null;
+    const workspaceRoot = await this.findworkspaceRoot();
+    if (!workspaceRoot) return null;
 
     await this.loadTSConfig();
 
-    const sstConfigPath = path.join(sstRoot, "sst.config.ts");
-    const tsConfigPath = path.join(sstRoot, "tsconfig.json");
+    const sstConfigPath = path.join(workspaceRoot, "sst.config.ts");
+    const tsConfigPath = path.join(workspaceRoot, "tsconfig.json");
 
     return {
-      rootPath: sstRoot,
+      rootPath: workspaceRoot,
       sstConfigPath: fs.existsSync(sstConfigPath) ? sstConfigPath : undefined,
       tsConfigPath: fs.existsSync(tsConfigPath) ? tsConfigPath : undefined,
       includePatterns: this.tsConfig?.include || ["**/*.ts"],
@@ -38,59 +35,75 @@ export class FileScanner {
     };
   }
 
-  protected async findSstRoot(): Promise<string | null> {
-    if (this.sstRoot) return this.sstRoot;
-
+  protected async findworkspaceRoot(): Promise<string | null> {
+    // should revalidate the workspace root
     const findSstConfig = async (dir: string): Promise<string | null> => {
-      try {
-        const configPath = path.join(dir, "sst.config.ts");
+      const configPath = path.join(dir, "sst.config.ts");
+      if (fs.existsSync(configPath)) {
+        return dir;
+      }
+
+      const entries = await fs.promises.readdir(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        if (entry.isDirectory() && !entry.name.startsWith(".") && entry.name !== "node_modules") {
+          const subPath = path.join(dir, entry.name);
+          const result = await findSstConfig(subPath);
+          if (result) return result;
+        }
+      }
+
+      return null;
+    };
+
+    // First try searching from workspace root and its subdirectories
+    this.workspaceRoot = (await findSstConfig(this.workspaceRoot)) || "";
+
+    // If not found, try searching parent directories
+    if (!this.workspaceRoot) {
+      let currentDir = this.workspaceRoot;
+      while (currentDir !== path.dirname(currentDir)) {
+        currentDir = path.dirname(currentDir);
+        const configPath = path.join(currentDir, "sst.config.ts");
         if (fs.existsSync(configPath)) {
-          return dir;
+          this.workspaceRoot = currentDir;
+          break;
+        }
+      }
+    }
+
+    if (this.workspaceRoot) {
+      await this.loadTSConfig();
+    }
+    return this.workspaceRoot;
+  }
+
+  protected async loadTSConfig(): Promise<void> {
+    if (!this.workspaceRoot) return;
+
+    const findTsConfig = async (dir: string): Promise<string | null> => {
+      try {
+        const tsConfigPath = path.join(dir, "tsconfig.json");
+        if (fs.existsSync(tsConfigPath)) {
+          return tsConfigPath;
         }
 
         const entries = await fs.promises.readdir(dir, { withFileTypes: true });
         for (const entry of entries) {
           if (entry.isDirectory() && !entry.name.startsWith(".") && entry.name !== "node_modules") {
             const subPath = path.join(dir, entry.name);
-            const result = await findSstConfig(subPath);
+            const result = await findTsConfig(subPath);
             if (result) return result;
           }
         }
       } catch (error) {
-        console.error(`Error searching in ${dir}:`, error);
+        console.error(`Error searching for tsconfig.json in ${dir}:`, error);
       }
       return null;
     };
 
-    // First try searching from workspace root and its subdirectories
-    this.sstRoot = await findSstConfig(this.workspaceRoot);
-
-    // If not found, try searching parent directories
-    if (!this.sstRoot) {
-      let currentDir = this.workspaceRoot;
-      while (currentDir !== path.dirname(currentDir)) {
-        currentDir = path.dirname(currentDir);
-        const configPath = path.join(currentDir, "sst.config.ts");
-        if (fs.existsSync(configPath)) {
-          this.sstRoot = currentDir;
-          break;
-        }
-      }
-    }
-
-    if (this.sstRoot) {
-      await this.loadTSConfig();
-    }
-
-    return this.sstRoot;
-  }
-
-  protected async loadTSConfig(): Promise<void> {
-    if (!this.sstRoot) return;
-
-    const tsConfigPath = path.join(this.sstRoot, "tsconfig.json");
     try {
-      if (fs.existsSync(tsConfigPath)) {
+      const tsConfigPath = await findTsConfig(this.workspaceRoot);
+      if (tsConfigPath) {
         const tsConfigContent = await fs.promises.readFile(tsConfigPath, "utf-8");
         this.tsConfig = JSON.parse(tsConfigContent);
       }
@@ -100,18 +113,18 @@ export class FileScanner {
     }
 
     if (!this.tsConfig) {
-      console.log("No sst.config.ts or tsconfig.json found");
+      console.log("No tsconfig.json found");
     }
   }
 
   public async scanHandlers(): Promise<HandlerInfo[]> {
-    const sstRoot = await this.findSstRoot();
-    if (!sstRoot) {
+    const workspaceRoot = await this.findworkspaceRoot();
+    if (!workspaceRoot) {
       return [];
     }
 
     const handlers: HandlerInfo[] = [];
-    await this.scanDirectory(sstRoot, handlers);
+    await this.scanDirectory(workspaceRoot, handlers);
     return handlers;
   }
 
@@ -148,14 +161,24 @@ export class FileScanner {
         }
       }
     } catch (error) {
-      console.error(`Error scanning directory ${dir}:`, error);
+      // throw error;
     }
   }
 
   protected shouldIncludeFile(filePath: string): boolean {
-    if (!this.sstRoot) return false;
+    if (!this.workspaceRoot) return false;
 
-    const relativePath = path.relative(this.sstRoot, filePath).replace(/\\/g, "/");
+    const relativePath = path.relative(this.workspaceRoot, filePath).replace(/\\/g, "/");
+
+    // check is declaration file
+    if (relativePath.endsWith(".d.ts")) {
+      return false;
+    }
+
+    // check if not a ts file
+    if (!relativePath.endsWith(".ts")) {
+      return false;
+    }
 
     // Check exclude patterns first
     if (this.tsConfig?.exclude) {
@@ -243,9 +266,9 @@ export class FileScanner {
   }
 
   public getRelativePath(filePath: string): string {
-    if (!this.sstRoot) return filePath;
+    if (!this.workspaceRoot) return filePath;
 
-    const relativePath = path.relative(this.sstRoot, filePath);
+    const relativePath = path.relative(this.workspaceRoot, filePath);
     const withoutExtension = relativePath.replace(/\.ts$/, "");
     return withoutExtension.replace(/\\/g, "/");
   }

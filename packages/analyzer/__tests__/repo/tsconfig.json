@@ -1,0 +1,18 @@
+{
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "module": "es2022",
+    "noEmit": true,
+    "typeRoots": ["env.d.ts"]
+  },
+  "include": [
+    "infra/**/*.ts",
+    "lib/**/*.ts",
+    "functions/**/*.ts",
+    "script/**/*.mjs",
+    "sst.config.ts",
+    "env.d.ts"
+  ],
+  "exclude": ["*/node_modules", "*/.pnpm", "*/.sst/**/*"]
+}

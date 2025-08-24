@@ -36,7 +36,14 @@ export class SSTValidator {
           filePath: "",
           handlerPath: "",
         });
-        return { isValid: false, errors, warnings };
+        return {
+          isValid: false,
+          errors,
+          warnings,
+          handlers: [],
+          sstProjectConfigPath: "",
+          tsConfigPath: "",
+        };
       }
 
       const handlers = await this.fileScanner.scanHandlers();
@@ -51,6 +58,9 @@ export class SSTValidator {
         isValid: errors.length === 0,
         errors,
         warnings,
+        handlers,
+        sstProjectConfigPath: config.sstConfigPath || "",
+        tsConfigPath: config.tsConfigPath || "",
       };
     } catch (error) {
       errors.push({
@@ -59,7 +69,14 @@ export class SSTValidator {
         filePath: "",
         handlerPath: "",
       });
-      return { isValid: false, errors, warnings };
+      return {
+        isValid: false,
+        errors,
+        warnings,
+        handlers: [],
+        sstProjectConfigPath: "",
+        tsConfigPath: "",
+      };
     }
   }
 
