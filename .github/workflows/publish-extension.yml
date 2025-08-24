@@ -82,9 +82,9 @@ jobs:
         run: |
           cd apps/extension
           if [[ "${{ github.event.inputs.prerelease }}" == "true" ]]; then
-            pnpm vsce publish --pre-release --pat ${{ secrets.VSCE_TOKEN }}
+            pnpm vsce publish --no-dependencies --pre-release --pat ${{ secrets.VSCE_TOKEN }}
           else
-            pnpm vsce publish --pat ${{ secrets.VSCE_TOKEN }}
+            pnpm vsce publish --no-dependencies --pat ${{ secrets.VSCE_TOKEN }}
           fi
         env:
           VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
