@@ -3,10 +3,19 @@
   "displayName": "SST Handler Autocomplete",
   "description": "VSCode extension providing autocomplete for SST function handlers",
   "version": "0.0.1",
+  "publisher": "kairiss",
+  "icon": "icon.png",
+  "author": {
+    "name": "Kai (Thien Ly)",
+    "email": "43800313+lyluongthien@users.noreply.github.com",
+    "url": "https://thediligentengineer.com"
+  },
   "engines": {
     "vscode": "^1.74.0"
   },
   "categories": [
+    "Programming Languages",
+    "Snippets",
     "Other"
   ],
   "activationEvents": [
