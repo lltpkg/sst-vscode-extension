@@ -55,7 +55,7 @@
   ],
   "scripts": {
     "watch": "tsc -watch -p .",
-    "test": "if [ \"$(uname -s)\" == \"Linux\" ]; then pnpm run test:linux; else pnpm run test:common; fi",
+    "test": "if [ \"$(uname -s)\" = \"Linux\" ]; then pnpm run test:linux; else pnpm run test:common; fi",
     "test:common": "vscode-test --config .vscode-test.mjs",
     "test:linux": "xvfb-run -a vscode-test --config .vscode-test.mjs",
     "test:watch": "vscode-test --watch",
