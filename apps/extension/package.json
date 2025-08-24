@@ -5,9 +5,9 @@
   "version": "0.0.1",
   "publisher": "kairiss",
   "icon": "icon.png",
-
   "files": [
-    "dist/extensions.js",
+    "./dist/extensions.js",
+    "extension/dist/extension.js",
     "icon.png",
     "LICENSE",
     "README.md"
