@@ -12,7 +12,7 @@ on:
         type: string
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   publish:
@@ -26,12 +26,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          registry-url: 'https://registry.npmjs.org'
           
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: '10.13.1'
+          
+      - name: Configure npm registry for pnpm
+        run: pnpm config set registry https://registry.npmjs.org/
           
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -51,6 +53,23 @@ jobs:
       - name: Publish to npm
         run: |
           cd packages/analyzer
-          npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          pnpm publish --access public --no-git-checks
+          
+      - name: Get published version
+        id: get-version
+        run: |
+          cd packages/analyzer
+          echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+          
+      - name: Configure git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+      - name: Create git tag and commit
+        run: |
+          VERSION="${{ steps.get-version.outputs.version }}"
+          git tag "v$VERSION" -m "Release @cute-me-on-repos/sst-analyzer@$VERSION"
+          git push origin "v$VERSION"
+          echo "✅ Created and pushed tag v$VERSION after successful publish"

@@ -5,6 +5,13 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.js",
+  "author": "Kai",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lltpkg/sst-vscode-extension.git",
+    "directory": "packages/analyzer"
+  },
+  "homepage": "https://github.com/lltpkg/sst-vscode-extension/tree/main/packages/analyzer",
   "type": "commonjs",
   "bin": {
     "sst-analyzer": "cli/sst-analyzer",
@@ -49,15 +56,5 @@
   ],
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/lyluongthien/sst-vscode-extension.git",
-    "directory": "packages/analyzer"
-  },
-  "homepage": "https://github.com/lyluongthien/sst-vscode-extension/tree/main/packages/analyzer",
-  "bugs": {
-    "url": "https://github.com/lyluongthien/sst-vscode-extension/issues"
-  },
-  "author": "Ly Luong Thien"
+  }
 }
