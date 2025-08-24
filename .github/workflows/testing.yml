@@ -107,7 +107,7 @@ jobs:
       - name: Build
         run: pnpm run build
       - name: Test vscode extension (Linux)
-        run: xvfb-run -a pnpm run test --filter=sst-vsc-ext
+        run: cd apps/extension && xvfb-run -a pnpm exec vscode-test --config .vscode-test.mjs
         if: runner.os == 'Linux'
       - name: Test vscode extension
         run: pnpm run test --filter=sst-vsc-ext
