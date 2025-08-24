@@ -84,23 +84,23 @@ jobs:
         run: |
           cd apps/extension
           if [[ "${{ github.event.inputs.prerelease }}" == "true" ]]; then
-            pnpm vsce publish --pre-release --pat ${{ secrets.VSCE_PAT }}
+            pnpm vsce publish --pre-release --pat ${{ secrets.VSCE_TOKEN }}
           else
-            pnpm vsce publish --pat ${{ secrets.VSCE_PAT }}
+            pnpm vsce publish --pat ${{ secrets.VSCE_TOKEN }}
           fi
         env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
 
-      - name: Publish to Open VSX Registry
-        run: |
-          cd apps/extension
-          if [[ "${{ github.event.inputs.prerelease }}" == "true" ]]; then
-            npx ovsx publish --pre-release --pat ${{ secrets.OVSX_PAT }}
-          else
-            npx ovsx publish --pat ${{ secrets.OVSX_PAT }}
-          fi
-        env:
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+      # - name: Publish to Open VSX Registry
+      #   run: |
+      #     cd apps/extension
+      #     if [[ "${{ github.event.inputs.prerelease }}" == "true" ]]; then
+      #       npx ovsx publish --pre-release --pat ${{ secrets.OVSX_PAT }}
+      #     else
+      #       npx ovsx publish --pat ${{ secrets.OVSX_PAT }}
+      #     fi
+      #   env:
+      #     OVSX_PAT: ${{ secrets.OVSX_PAT }}
 
   create-release:
     name: Create GitHub Release
