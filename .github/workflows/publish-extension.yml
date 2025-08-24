@@ -61,16 +61,14 @@ jobs:
 
       - name: Build extension
         run: |
-          cd apps/extension
-          pnpm run build
+          pnpm run build --filter=sst-vsc-ext
 
       - name: Package extension
         id: package
         run: |
-          cd apps/extension
-          pnpm run package
-          VSIX_FILE=$(find . -name "*.vsix" | head -1)
-          echo "vsix-path=apps/extension/$VSIX_FILE" >> $GITHUB_OUTPUT
+          pnpm run deploy
+          VSIX_FILE=$(find extensions -name "*.vsix" | head -1)
+          echo "vsix-path=$VSIX_FILE" >> $GITHUB_OUTPUT
           echo "Packaged: $VSIX_FILE"
 
       - name: Upload VSIX artifact

@@ -48,7 +48,6 @@ jobs:
           key: ${{ runner.os }}-turbo-${{ hashFiles('node_modules/.cache/.turbo/*.json') }}
 
   build-and-test:
-    needs: [lint]
     name: Build & Test
     strategy:
       matrix:
