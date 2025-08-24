@@ -6,6 +6,8 @@
     "concurrently": "concurrently --success all --prefix \"[{name}]\" ",
     "new-branch": "pnpm exec git-branch-lint --branch",
     "test": "pnpm turbo run test",
+    "test:package": "vitest run __tests__/",
+    "test:package:watch": "vitest watch __tests__/",
     "build": "pnpm turbo run build",
     "deploy": "pnpm turbo run deploy",
     "shellcheck:lint": "bash ./scripts/shellcheck.bash",
@@ -19,7 +21,7 @@
     "clean:turbo": "rm -rf .turbo apps/*/.turbo packages/*/.turbo"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.2.0",
+    "@biomejs/biome": "2.2.2",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@commitlint/config-workspace-scopes": "^19.8.1",
