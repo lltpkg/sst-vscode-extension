@@ -10,10 +10,27 @@ Core validation library for SST projects with CLI support.
 ```bash
 npm install -g @cute-me-on-repos/sst-analyzer
 ```
-
 ### 🎯 [VSCode Extension](./apps/extension)  
-VSCode extension providing intelligent SST project support.
+VSCode extension providing intelligent SST project support with advanced features.
 
+**Features:**
+- 🔍 **Go to Definition**: Navigate from handler strings to actual function files
+- 📝 **Autocomplete**: Smart suggestions for SST function handlers
+- ⚡ **Real-time Validation**: Instant feedback on handler paths
+- 🔄 **Auto-refresh**: Automatically updates when project structure changes
+
+**Installation:**
+VSCode marketplace:
+https://marketplace.visualstudio.com/items?itemName=kairiss.sst-vsc-ext
+or 
+```bash
+code --install-extension kairiss.sst-vsc-ext 
+# or
+cursor --install-extension kairiss.sst-vsc-ext 
+```
+
+**Commands:**
+- `SST: Refresh Handlers` - Manually refresh handler cache
 ## Publishing
 
 ### Analyzer Package
