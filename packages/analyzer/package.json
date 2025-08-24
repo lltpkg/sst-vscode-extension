@@ -1,0 +1,47 @@
+{
+  "name": "sst-analyzer",
+  "version": "0.1.0",
+  "description": "Core validation library for SST projects with CLI support",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.js",
+  "type": "commonjs",
+  "bin": {
+    "sst-analyzer": "cli/sst-analyzer"
+  },
+  "scripts": {
+    "build:lib": "rm -rf dist && tsc -p .",
+    "build:cli": "esbuild ./src/cli/index.ts --bundle --outfile=cli/sst-analyzer --platform=node --format=cjs --define:process.env.NODE_ENV='\"production\"' --minify",
+    "build": "pnpm run build:lib && pnpm run build:cli",
+    "dev": "tsc -p . --watch",
+    "test": "vitest run",
+    "check-types": "tsc --noEmit && tsc -p tsconfig.test.json --noEmit",
+    "lint": "biome check",
+    "cspell": "cspell -c ../../.cspell.json './**/*' '!*lock.yaml' '!**/*.mermaid' '!**/*.svg'",
+    "validate": "node cli/sst-analyzer"
+  },
+  "keywords": [
+    "sst",
+    "serverless",
+    "validation",
+    "typescript",
+    "cli"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^22.17.2",
+    "chalk": "^5.3.0",
+    "commander": "^11.0.0",
+    "glob": "^10.3.0",
+    "typescript": "catalog:",
+    "vitest": "^3.2.0",
+    "esbuild": "^0.25.9"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ]
+}
