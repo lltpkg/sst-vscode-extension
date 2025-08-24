@@ -47,49 +47,9 @@ jobs:
             apps/extension/.vscode-test
           key: ${{ runner.os }}-turbo-${{ hashFiles('node_modules/.cache/.turbo/*.json') }}
 
-  build-and-test-analyzer:
-    needs: lint
-    name: Build & Test analyzer package
-    runs-on: ubuntu-latest
-    env: 
-      TURBO_CACHE_DIR: 'node_modules/.cache/.turbo'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: '10.13.1'
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      - name: Load cache
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            node_modules/.cache/.turbo
-            apps/extension/.vscode-test
-          key: ${{ runner.os }}-turbo-${{ hashFiles('node_modules/.cache/.turbo/*.json') }}
-          restore-keys: ${{ runner.os }}-turbo-
-      - name: Build
-        run: pnpm exec turbo build --filter=@cute-me-on-repos/sst-analyzer
-      - name: Test analyzer package
-        run: pnpm exec turbo test --filter=@cute-me-on-repos/sst-analyzer
-      - name: Save cache
-        uses: actions/cache/save@v4
-        if: always() 
-        with:
-          path: |
-            node_modules/.cache/.turbo
-            apps/extension/.vscode-test
-          key: ${{ runner.os }}-turbo-${{ hashFiles('node_modules/.cache/.turbo/*.json') }}
-  build-and-test-extension:
-    needs: [build-and-test-analyzer, lint]
-    name: Build & Test extension
+  build-and-test:
+    needs: [lint]
+    name: Build & Test
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest] # no windows testing at this time
@@ -122,7 +82,7 @@ jobs:
       - name: Build
         run: pnpm run build
       - name: Test vscode extension
-        run: pnpm run test --filter=sst-vsc-ext
+        run: pnpm run test
       - name: Save cache
         uses: actions/cache/save@v4
         if: always() 
