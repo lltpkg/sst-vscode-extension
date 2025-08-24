@@ -7,6 +7,7 @@
     "new-branch": "pnpm exec git-branch-lint --branch",
     "test": "pnpm turbo run test",
     "build": "pnpm turbo run build",
+    "deploy": "pnpm turbo run deploy",
     "shellcheck:lint": "bash ./scripts/shellcheck.bash",
     "shellcheck": "shellcheck -a -x --rcfile=.shellcheckrc",
     "lint": "pnpm turbo run lint",

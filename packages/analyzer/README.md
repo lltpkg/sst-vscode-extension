@@ -214,6 +214,3 @@ pnpm test
 pnpm dev
 ```
 
-## License
-
-MIT

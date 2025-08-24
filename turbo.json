@@ -8,11 +8,15 @@
       "outputs": ["dist/**", "!dist/cache/**", ".sst/**", "build/**"],
       "cache": true
     },
-
+    "deploy": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "apps/**/*", "packages/**/*", ".env*"],
+      "outputs": ["extensions/**"],
+      "cache": true
+    },
     "check-types": {
       "dependsOn": ["^check-types"]
     },
-
     "test": {
       "inputs": [
         "!node_modules/**",
