@@ -33,5 +33,12 @@ jobs:
         run: pnpm run build
       - name: Test
         run: pnpm run test --filter=@cute-me-on-repos/sst-analyzer
-      # - name: Test vscode extension # not available yet
-      #   run: pnpm run test --filter=@cute-me-on-repos/sst-vsc-ext
+      - name: Test vscode extension
+        run: pnpm run test --filter=@cute-me-on-repos/sst-vsc-ext
+      - name: Test vscode extension (Linux)
+        run: cd apps/extension && xvfb-run -a pnpm run test
+        if: runner.os == 'Linux'
+      - name: Test vscode extension (MacOS, Windows)
+        run: pnpm run test --filter=sst-vsc-ext
+        if: runner.os != 'Linux'
+  
