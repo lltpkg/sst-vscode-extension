@@ -1,0 +1,58 @@
+{
+  "name": "sst-vsc-ext",
+  "displayName": "SST Handler Autocomplete",
+  "description": "VSCode extension providing autocomplete for SST function handlers",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:typescript"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "sst-vsc-ext.refreshHandlers",
+        "title": "Refresh SST Handlers"
+      }
+    ]
+  },
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/notset.git"
+  },
+  "bugs": {
+    "url": "https://github.com/notset/issues"
+  },
+  "scripts": {
+    "watch": "tsc -watch -p .",
+    "test": "vitest run",
+    "test:watch": "vitest --watch",
+    "check-types": "tsc --noEmit",
+    "lint": "biome check",
+    "vscode:prepublish": "pnpm run build:ts --minify",
+    "build:ts": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --define:process.env.NODE_ENV='\"production\"'",
+    "cspell": "cspell -c ../../.cspell.json './**/*' '!*lock.yaml' '!**/*.mermaid' '!**/*.svg'",
+    "package": "pnpm vsce package --no-dependencies",
+    "publish": "pnpm vsce publish --no-dependencies",
+    "build": "rm -rf dist && pnpm build:ts",
+    "build:vsx": "rm -rf dist && pnpm build:ts && pnpm package && mv *.vsix ../../extensions/ && echo 'Extension deployed to extensions/ directory'",
+    "deploy": "pnpm build:vsx"
+  },
+  "devDependencies": {
+    "@types/node": "^22.17.2",
+    "@types/vscode": "1.74.0",
+    "typescript": "catalog:",
+    "vitest": "^3.2.4",
+    "@vscode/vsce": "^3.6.0",
+    "esbuild": "^0.25.9"
+  },
+  "dependencies": {
+    "sst-analyzer": "workspace:*"
+  }
+}
