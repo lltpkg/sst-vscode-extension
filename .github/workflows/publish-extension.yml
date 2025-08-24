@@ -1,0 +1,175 @@
+name: Publish VSCode Extension
+
+on:
+  push:
+    tags:
+      - 'extension-v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 1.0.0)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Publish as pre-release'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  publish:
+    name: Publish Extension
+    runs-on: ubuntu-latest
+    if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      vsix-path: ${{ steps.package.outputs.vsix-path }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '10.13.1'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Determine version
+        id: version
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/extension-v}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Publishing version: $VERSION"
+
+      - name: Update package version
+        run: |
+          cd apps/extension
+          npm version ${{ steps.version.outputs.version }} --no-git-tag-version
+
+      - name: Build extension
+        run: |
+          cd apps/extension
+          pnpm run build
+
+      - name: Package extension
+        id: package
+        run: |
+          cd apps/extension
+          pnpm run package
+          VSIX_FILE=$(find . -name "*.vsix" | head -1)
+          echo "vsix-path=apps/extension/$VSIX_FILE" >> $GITHUB_OUTPUT
+          echo "Packaged: $VSIX_FILE"
+
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-extension-${{ steps.version.outputs.version }}
+          path: ${{ steps.package.outputs.vsix-path }}
+          retention-days: 30
+
+      - name: Publish to Visual Studio Marketplace
+        run: |
+          cd apps/extension
+          if [[ "${{ github.event.inputs.prerelease }}" == "true" ]]; then
+            pnpm vsce publish --pre-release --pat ${{ secrets.VSCE_PAT }}
+          else
+            pnpm vsce publish --pat ${{ secrets.VSCE_PAT }}
+          fi
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Publish to Open VSX Registry
+        run: |
+          cd apps/extension
+          if [[ "${{ github.event.inputs.prerelease }}" == "true" ]]; then
+            npx ovsx publish --pre-release --pat ${{ secrets.OVSX_PAT }}
+          else
+            npx ovsx publish --pat ${{ secrets.OVSX_PAT }}
+          fi
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+
+  create-release:
+    name: Create GitHub Release
+    needs: publish
+    runs-on: ubuntu-latest
+    if: github.ref_type == 'tag'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download VSIX artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: vscode-extension-${{ needs.publish.outputs.version }}
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Extract changelog for this version
+          VERSION="${{ needs.publish.outputs.version }}"
+          echo "## Changes in v$VERSION" > release_notes.md
+          echo "" >> release_notes.md
+          
+          # Get commits since last tag
+          LAST_TAG=$(git tag -l "extension-v*" --sort=-version:refname | grep -v "extension-v$VERSION" | head -1)
+          if [[ -n "$LAST_TAG" ]]; then
+            echo "### Commits since $LAST_TAG:" >> release_notes.md
+            git log --oneline "$LAST_TAG..HEAD" --pretty="format:- %s (%h)" >> release_notes.md
+          else
+            echo "### Initial release" >> release_notes.md
+          fi
+          
+          echo "" >> release_notes.md
+          echo "### Installation" >> release_notes.md
+          echo "- Install from [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=kairiss.sst-vsc-ext)" >> release_notes.md
+          echo "- Install from [Open VSX Registry](https://open-vsx.org/extension/kairiss/sst-vsc-ext)" >> release_notes.md
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: extension-v${{ needs.publish.outputs.version }}
+          release_name: SST VSCode Extension v${{ needs.publish.outputs.version }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: ${{ github.event.inputs.prerelease == 'true' }}
+
+      - name: Upload VSIX to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ needs.publish.outputs.vsix-path }}
+          asset_name: sst-vsc-ext-${{ needs.publish.outputs.version }}.vsix
+          asset_content_type: application/zip
+
+  notify:
+    name: Notify Success
+    needs: [publish, create-release]
+    runs-on: ubuntu-latest
+    if: always() && needs.publish.result == 'success'
+    steps:
+      - name: Success notification
+        run: |
+          echo "🎉 Successfully published SST VSCode Extension v${{ needs.publish.outputs.version }}"
+          echo "📦 Available on VS Code Marketplace"
+          echo "📦 Available on Open VSX Registry"
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            echo "📋 GitHub Release created"
+          fi

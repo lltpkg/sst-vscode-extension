@@ -22,13 +22,13 @@ describe("Basic Integration Tests", () => {
 
   describe("SSTValidator Basic Tests", () => {
     it("should create a validator instance", () => {
-      const fileScanner = new FileScanner(testRepoPath, ts);
+      const _fileScanner = new FileScanner(testRepoPath, ts);
       const validator = new SSTValidator(testRepoPath, ts);
       expect(validator).toBeInstanceOf(SSTValidator);
     });
 
     it("should validate project structure", async () => {
-      const fileScanner = new FileScanner(testRepoPath, ts);
+      const _fileScanner = new FileScanner(testRepoPath, ts);
       const validator = new SSTValidator(testRepoPath, ts);
 
       const result = await validator.validateProject();

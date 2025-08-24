@@ -4,3 +4,7 @@ dist
 .DS_Store
 .npmrc
 .vscode-test
+
+# VSCode Extension packages
+*.vsix
+vscode-extension-*.tgz

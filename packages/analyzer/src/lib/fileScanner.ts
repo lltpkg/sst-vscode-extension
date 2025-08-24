@@ -160,7 +160,7 @@ export class FileScanner {
           }
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // throw error;
     }
   }

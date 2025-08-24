@@ -24,7 +24,7 @@ describe("SSTValidator - Real Repository Tests", () => {
   const testRepoPath = path.resolve(__dirname, "../../__tests__/repo");
 
   beforeEach(() => {
-    const fileScanner = new FileScanner(testRepoPath, ts);
+    const _fileScanner = new FileScanner(testRepoPath, ts);
     validator = new TestableValidator(testRepoPath, ts);
   });
 

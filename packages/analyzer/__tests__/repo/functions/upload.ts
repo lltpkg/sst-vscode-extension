@@ -5,7 +5,7 @@ export const handler = await createAWSHandler(
   {
     withDb: true,
   },
-  async (event, context): Promise<APIGatewayProxyResult> => {
+  async (_event, _context): Promise<APIGatewayProxyResult> => {
     return {};
   },
 );

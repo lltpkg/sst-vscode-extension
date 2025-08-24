@@ -1,0 +1,77 @@
+name: Release VSCode Extension
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g., extension-v1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  publish-extension:
+    name: Publish Extension on Release
+    runs-on: ubuntu-latest
+    if: github.event.release.tag_name != '' || github.event.inputs.tag != ''
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name || github.event.inputs.tag }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '10.13.1'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${{ github.event.release.tag_name || github.event.inputs.tag }}"
+          VERSION="${TAG#extension-v}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
+
+      - name: Update package version
+        run: |
+          cd apps/extension
+          npm version ${{ steps.version.outputs.version }} --no-git-tag-version
+
+      - name: Build and package extension
+        run: |
+          cd apps/extension
+          pnpm run build
+          pnpm run package
+
+      - name: Publish to VS Code Marketplace
+        run: |
+          cd apps/extension
+          pnpm vsce publish --pat ${{ secrets.VSCE_PAT }}
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Publish to Open VSX Registry
+        run: |
+          cd apps/extension
+          npx ovsx publish --pat ${{ secrets.OVSX_PAT }}
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+
+      - name: Upload VSIX to release
+        if: github.event.release.tag_name != ''
+        run: |
+          cd apps/extension
+          VSIX_FILE=$(find . -name "*.vsix" | head -1)
+          gh release upload ${{ github.event.release.tag_name }} "$VSIX_FILE"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

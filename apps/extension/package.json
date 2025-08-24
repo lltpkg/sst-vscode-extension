@@ -33,11 +33,26 @@
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
-    "url": "https://github.com/notset.git"
+    "url": "https://github.com/lyluongthien/sst-vscode-extension.git"
   },
   "bugs": {
-    "url": "https://github.com/notset/issues"
+    "url": "https://github.com/lyluongthien/sst-vscode-extension/issues"
   },
+  "homepage": "https://github.com/lyluongthien/sst-vscode-extension",
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
+  "keywords": [
+    "sst",
+    "serverless",
+    "aws",
+    "lambda",
+    "autocomplete",
+    "typescript",
+    "handler",
+    "infrastructure"
+  ],
   "scripts": {
     "watch": "tsc -watch -p .",
     "test": "vscode-test --config .vscode-test.mjs",
@@ -52,6 +67,8 @@
     "cspell": "cspell -c ../../.cspell.json './**/*' '!*lock.yaml' '!**/*.mermaid' '!**/*.svg'",
     "package": "pnpm vsce package --no-dependencies",
     "publish": "pnpm vsce publish --no-dependencies",
+    "publish:ovsx": "npx ovsx publish --no-dependencies",
+    "publish:all": "pnpm run publish && pnpm run publish:ovsx",
     "build": "rm -rf dist && pnpm build:test && pnpm build:ts",
     "build:vsx": "rm -rf dist && pnpm build:ts && pnpm package && mv *.vsix ../../extensions/ && echo 'Extension deployed to extensions/ directory'",
     "deploy": "pnpm build:vsx"
@@ -66,6 +83,7 @@
     "esbuild": "^0.25.9",
     "glob": "^10.4.5",
     "mocha": "^11.7.1",
+    "ovsx": "^0.10.5",
     "typescript": "catalog:",
     "vitest": "^3.2.4"
   },
