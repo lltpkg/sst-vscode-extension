@@ -2,7 +2,7 @@
   "name": "sst-vsc-ext",
   "displayName": "SST Handler Autocomplete",
   "description": "VSCode extension providing autocomplete for SST function handlers",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "kairiss",
   "icon": "icon.png",
   "author": {
