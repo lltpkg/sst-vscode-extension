@@ -2,7 +2,6 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import * as ts from "typescript";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { an } from "vitest/dist/chunks/reporters.d.BFLkQcL6.js";
 import { FileScanner } from "../lib/fileScanner";
 
 // Mock fs module

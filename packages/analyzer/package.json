@@ -1,5 +1,5 @@
 {
-  "name": "sst-analyzer",
+  "name": "@cute-me-on-repos/sst-analyzer",
   "version": "0.1.0",
   "description": "Core validation library for SST projects with CLI support",
   "main": "dist/index.js",
@@ -7,7 +7,8 @@
   "module": "dist/index.js",
   "type": "commonjs",
   "bin": {
-    "sst-analyzer": "cli/sst-analyzer"
+    "sst-analyzer": "cli/sst-analyzer",
+    "cute-sst-analyzer": "cli/sst-analyzer"
   },
   "scripts": {
     "build:lib": "rm -rf dist && tsc -p .",
@@ -42,6 +43,21 @@
   },
   "files": [
     "dist/**/*",
-    "README.md"
-  ]
+    "cli/sst-analyzer",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lyluongthien/sst-vscode-extension.git",
+    "directory": "packages/analyzer"
+  },
+  "homepage": "https://github.com/lyluongthien/sst-vscode-extension/tree/main/packages/analyzer",
+  "bugs": {
+    "url": "https://github.com/lyluongthien/sst-vscode-extension/issues"
+  },
+  "author": "Ly Luong Thien"
 }

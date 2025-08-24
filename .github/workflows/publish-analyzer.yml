@@ -1,0 +1,56 @@
+name: Publish Analyzer Package
+
+on:
+  push:
+    tags:
+      - 'analyzer-v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 0.1.1)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '10.13.1'
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Code quality check
+        run: pnpm run lint --filter=@cute-me-on-repos/sst-analyzer
+        
+      - name: Build package
+        run: pnpm run build --filter=@cute-me-on-repos/sst-analyzer
+        
+      - name: Update version (if workflow_dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          cd packages/analyzer
+          npm version ${{ github.event.inputs.version }} --no-git-tag-version
+          
+      - name: Publish to npm
+        run: |
+          cd packages/analyzer
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

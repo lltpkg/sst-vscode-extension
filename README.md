@@ -1,45 +1,40 @@
-# SST Handler Autocomplete Extension
+# SST VSCode Extension
 
-A VSCode extension that provides intelligent autocomplete, validation, and navigation for SST (Serverless Stack) function handlers.
+A comprehensive VSCode extension and analyzer toolkit for SST (Serverless Stack) projects.
 
-## Features
+## Packages
 
-🔍 **Smart Handler Autocomplete**: Automatically suggests available handler functions when writing SST constructs  
-📊 **Usage Statistics**: View handler usage statistics on hover - see where and how often each handler is used  
-🔗 **Go-to-Definition**: Navigate directly to handler implementations  
-⚠️ **Real-time Validation**: Detect missing files, invalid handler paths, and broken references  
-🛠️ **Code Actions**: Quick fixes for common handler issues
+### 📦 [@cute-me-on-repos/sst-analyzer](./packages/analyzer)
+Core validation library for SST projects with CLI support.
 
-## Supported SST Constructs
+```bash
+npm install -g @cute-me-on-repos/sst-analyzer
+```
 
-- `sst.aws.Function` - Lambda functions
-- `sst.aws.Cron` - Scheduled functions
-- `sst.aws.Queue` - Queue subscribers
-- `sst.aws.Bucket` - Bucket notifications
-- `sst.aws.ApiGatewayV1` - API routes
+### 🎯 [VSCode Extension](./apps/extension)  
+VSCode extension providing intelligent SST project support.
 
-## Usage Statistics
+## Publishing
 
-Hover over any handler path to see:
+### Analyzer Package
 
-- **Usage count** - How many times the handler is referenced
-- **Usage locations** - Exact files and lines where it's used
-- **Context information** - Type of SST construct using the handler
+The `@cute-me-on-repos/sst-analyzer` package is automatically published to npm when changes are made to the analyzer package on the main branch.
 
-## Bundle Size Optimization
+#### Manual Publishing
 
-This extension uses an optimized build strategy:
+```bash
+# Dry run
+./scripts/publish-analyzer.bash --dry-run
 
-- **TypeScript External**: Uses VSCode's built-in TypeScript instead of bundling (~36KB vs several MB)
-- **Smart Loading**: Dynamically loads TypeScript at runtime from VSCode's environment
-- **Efficient Bundling**: Uses esbuild with external dependencies for minimal size
+# Publish
+./scripts/publish-analyzer.bash
+```
 
-### Bundle Details
+#### Workflow Triggers
 
-- Unminified: ~76KB
-- Minified: ~36KB
-- Final VSIX: ~14KB
-- No TypeScript bundled - uses VSCode's copy
+1. **Automatic Release**: Push to `main` branch with changes in `packages/analyzer/`
+2. **Manual Release**: Workflow dispatch with version input
+3. **Tag Release**: Push tag matching `analyzer-v*`
 
 ## Development
 
@@ -47,23 +42,26 @@ This extension uses an optimized build strategy:
 # Install dependencies
 pnpm install
 
-# Build extension
-pnpm build
-
-# Watch mode
-pnpm watch
+# Build all packages
+pnpm run build
 
 # Run tests
-pnpm test
+pnpm run test
+
+# Lint
+pnpm run lint
 ```
 
 ## Architecture
 
-The extension is built on top of the `sst-analyzer` library which provides:
+```
+sst-vscode-extension/
+├── packages/
+│   └── analyzer/          # Core validation library + CLI
+└── apps/
+    └── extension/         # VSCode extension
+```
 
-- TypeScript AST analysis for handler detection
-- File system scanning with tsconfig.json support
-- Validation logic and error reporting
-- Usage statistics analysis
+## License
 
-This modular approach allows the same core logic to be used in both the VSCode extension and CLI tools.
+MIT - see individual package LICENSE files for details.
