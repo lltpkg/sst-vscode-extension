@@ -13,7 +13,7 @@ jobs:
     name: Lint and Format Check
     runs-on: ubuntu-latest
     env: 
-      TURBO_CACHE_DIR: 'node_modules/.turbo'
+      TURBO_CACHE_DIR: 'node_modules/.cache/.turbo'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -44,7 +44,7 @@ jobs:
     name: Build, and Test analyzer package
     runs-on: ubuntu-latest
     env: 
-      TURBO_CACHE_DIR: 'node_modules/.turbo'
+      TURBO_CACHE_DIR: 'node_modules/.cache/.turbo'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
