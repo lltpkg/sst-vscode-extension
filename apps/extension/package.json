@@ -40,28 +40,36 @@
   },
   "scripts": {
     "watch": "tsc -watch -p .",
-    "test": "vitest run",
-    "test:watch": "vitest --watch",
+    "test": "vscode-test --config .vscode-test.mjs",
+    "test:watch": "vscode-test --watch",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest --watch",
     "check-types": "tsc --noEmit",
     "lint": "biome check",
     "vscode:prepublish": "pnpm run build:ts --minify",
+    "build:test": "tsc -p tsconfig.json",
     "build:ts": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --define:process.env.NODE_ENV='\"production\"'",
     "cspell": "cspell -c ../../.cspell.json './**/*' '!*lock.yaml' '!**/*.mermaid' '!**/*.svg'",
     "package": "pnpm vsce package --no-dependencies",
     "publish": "pnpm vsce publish --no-dependencies",
-    "build": "rm -rf dist && pnpm build:ts",
+    "build": "rm -rf dist && pnpm build:test && pnpm build:ts",
     "build:vsx": "rm -rf dist && pnpm build:ts && pnpm package && mv *.vsix ../../extensions/ && echo 'Extension deployed to extensions/ directory'",
     "deploy": "pnpm build:vsx"
   },
   "devDependencies": {
+    "@types/mocha": "^10.0.10",
     "@types/node": "^22.17.2",
     "@types/vscode": "1.74.0",
-    "typescript": "catalog:",
-    "vitest": "^3.2.4",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.6.0",
-    "esbuild": "^0.25.9"
+    "esbuild": "^0.25.9",
+    "glob": "^10.4.5",
+    "mocha": "^11.7.1",
+    "typescript": "catalog:",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
-    "sst-analyzer": "workspace:*"
+    "@cute-me-on-repos/sst-analyzer": "workspace:*"
   }
 }

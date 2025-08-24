@@ -21,7 +21,7 @@ type ExtensionContext = {
   providers: Providers;
 };
 
-let extensionContext: ExtensionContext | null = null;
+let _extensionContext: ExtensionContext | null = null;
 
 export async function activate(context: vscode.ExtensionContext) {
   const outputChannel = vscode.window.createOutputChannel("SST Extension Log");
@@ -34,12 +34,30 @@ export async function activate(context: vscode.ExtensionContext) {
     if (!workspaceRoot) return;
 
     const typescript = await loadTypeScript(workspaceRoot, outputChannel);
-    if (!typescript) return;
+    if (!typescript) {
+      outputChannel.appendLine("Failed to load TypeScript");
+      vscode.window.showErrorMessage(
+        "Failed to load TypeScript, please install TypeScript in workspace or refresh the extension",
+      );
+      return;
+    }
+
+    logInfo(outputChannel, "TypeScript loaded successfully", { version: typescript.version });
+
+    vscode.window.showInformationMessage("TypeScript loaded successfully", typescript.version);
+
+    await new Promise((resolve) => setTimeout(resolve, 5000));
 
     setupProcessEventHandlers(outputChannel);
 
+    if (!typescript.isNewExpression) {
+      throw new Error(
+        "TypeScript is not a supported version. Please install TypeScript 5.0.0 or higher",
+      );
+    }
+
     const providers = createProviders(workspaceRoot, typescript);
-    extensionContext = { workspaceRoot, typescript, outputChannel, providers };
+    _extensionContext = { workspaceRoot, typescript, outputChannel, providers };
 
     const registrations = registerLanguageProviders(providers);
     const commands = registerCommands(providers, outputChannel);
@@ -80,7 +98,7 @@ async function loadTypeScript(
     logInfo(outputChannel, "Loading TypeScript from workspace", { path: localTypescriptPath });
     return await import(localTypescriptPath);
   } catch (error) {
-    logInfo(outputChannel, "Local TypeScript not found, trying VSCode extension");
+    logInfo(outputChannel, "Local TypeScript not found, trying VSCode extension " + error);
     return await loadTypeScriptFromVSCode(outputChannel);
   }
 }

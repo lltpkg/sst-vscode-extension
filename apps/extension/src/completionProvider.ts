@@ -1,4 +1,4 @@
-import { ASTAnalyzer, FileScanner, type HandlerInfo } from "sst-analyzer";
+import { ASTAnalyzer, FileScanner, type HandlerInfo } from "@cute-me-on-repos/sst-analyzer";
 import * as vscode from "vscode";
 import { HandlerParser } from "./handlerParser";
 

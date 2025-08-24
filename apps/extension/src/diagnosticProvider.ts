@@ -1,4 +1,4 @@
-import { ASTAnalyzer, SSTValidator, type ValidationError } from "sst-analyzer";
+import { ASTAnalyzer, SSTValidator, type ValidationError } from "@cute-me-on-repos/sst-analyzer";
 import * as vscode from "vscode";
 
 export class SSTDiagnosticProvider {

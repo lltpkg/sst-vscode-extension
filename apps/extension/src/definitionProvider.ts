@@ -1,4 +1,4 @@
-import { ASTAnalyzer, FileScanner } from "sst-analyzer";
+import { ASTAnalyzer, FileScanner } from "@cute-me-on-repos/sst-analyzer";
 import type * as tsNP from "typescript";
 import * as vscode from "vscode";
 

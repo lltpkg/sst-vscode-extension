@@ -1,4 +1,4 @@
-import { ASTAnalyzer, FileScanner, StatisticsAnalyzer } from "sst-analyzer";
+import { ASTAnalyzer, FileScanner, StatisticsAnalyzer } from "@cute-me-on-repos/sst-analyzer";
 import type * as ts from "typescript";
 import * as vscode from "vscode";
 
@@ -11,9 +11,9 @@ export class SSTHoverProvider implements vscode.HoverProvider {
     workspaceRoot: string,
     private readonly ts: typeof import("typescript"),
   ) {
-    this.astAnalyzer = new ASTAnalyzer(this.ts);
-    this.fileScanner = new FileScanner(workspaceRoot, this.ts);
-    this.statisticsAnalyzer = new StatisticsAnalyzer(workspaceRoot, this.ts);
+    this.astAnalyzer = new ASTAnalyzer(ts);
+    this.fileScanner = new FileScanner(workspaceRoot, ts);
+    this.statisticsAnalyzer = new StatisticsAnalyzer(workspaceRoot, ts);
   }
 
   async provideHover(

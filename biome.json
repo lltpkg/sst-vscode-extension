@@ -19,7 +19,8 @@
       "!**/*.lock",
       "!**/apps/sls/.sst",
       "!**/*.d.ts",
-      "!**/*.bash"
+      "!**/*.bash",
+      "!**/.vscode-test/**/*"
     ]
   },
   "formatter": {
@@ -50,7 +51,8 @@
         "noUnusedTemplateLiteral": "off"
       },
       "suspicious": {
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "useIterableCallbackReturn": "off"
       }
     }
   },

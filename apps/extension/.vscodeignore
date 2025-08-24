@@ -1,6 +1,3 @@
-node_modules
-.turbo/
-src/
 *
 !LICENSE
 !icon.png
