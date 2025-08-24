@@ -1,8 +1,8 @@
 {
   "name": "sst-vsc-ext",
-  "displayName": "SST Handler Autocomplete",
+  "displayName": "SST - serverless stack vscode extension",
   "description": "VSCode extension providing autocomplete for SST function handlers",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "kairiss",
   "icon": "icon.png",
   "files": [
@@ -36,15 +36,15 @@
       }
     ]
   },
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lyluongthien/sst-vscode-extension.git"
+    "url": "https://github.com/lltpkg/sst-vscode-extension.git"
   },
   "bugs": {
-    "url": "https://github.com/lyluongthien/sst-vscode-extension/issues"
+    "url": "https://github.com/lltpkg/sst-vscode-extension/issues"
   },
-  "homepage": "https://github.com/lyluongthien/sst-vscode-extension",
+  "homepage": "https://github.com/lltpkg/sst-vscode-extension",
   "galleryBanner": {
     "color": "#1e1e1e",
     "theme": "dark"
