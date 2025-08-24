@@ -16,6 +16,14 @@ on:
         type: boolean
         default: false
 
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+  issues: write
+  pull-requests: write
+  discussions: write
+
 jobs:
   publish:
     name: Publish Extension
@@ -157,17 +165,3 @@ jobs:
           asset_name: sst-vsc-ext-${{ needs.publish.outputs.version }}.vsix
           asset_content_type: application/zip
 
-  notify:
-    name: Notify Success
-    needs: [publish, create-release]
-    runs-on: ubuntu-latest
-    if: always() && needs.publish.result == 'success'
-    steps:
-      - name: Success notification
-        run: |
-          echo "🎉 Successfully published SST VSCode Extension v${{ needs.publish.outputs.version }}"
-          echo "📦 Available on VS Code Marketplace"
-          echo "📦 Available on Open VSX Registry"
-          if [[ "${{ github.ref_type }}" == "tag" ]]; then
-            echo "📋 GitHub Release created"
-          fi
