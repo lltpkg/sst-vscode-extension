@@ -1,6 +1,6 @@
 {
   "name": "sst-vscode-extension-workspace",
-  "private": true,
+  "private": false,
   "scripts": {
     "prepare": "bash ./scripts/prepare.bash",
     "concurrently": "concurrently --success all --prefix \"[{name}]\" ",
